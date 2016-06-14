@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class Util{
 
     //public static final String IP = "192.168.0.4";
-    public static final String IP = "54.88.96.218";//esta linea de codigo
+    public static final String IP = "54.88.96.218";//esta linea de codigo subir
     public static final String URL_SERVICE = "http://" + IP + ":8080/ServiceBang/rest/1/";
     public static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
