@@ -23,11 +23,9 @@ import org.json.JSONObject;
 public class SaldoTask extends AsyncTask<Void, Void, String>  {
 
     private String mToken;
-    private Context mContext;
 
-    public SaldoTask(String token, Context context) {
+    public SaldoTask(String token) {
         this.mToken = token;
-        this.mContext = context;
     }
 
     @Override

@@ -12,7 +12,7 @@
             android:title="Reporte" />
     </group>
 
-    <item android:title="Cerrar Session">
+    <item android:title="Cerrar Sesión">
         <menu>
             <item
                 android:id="@+id/salir"

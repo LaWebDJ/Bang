@@ -6,14 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.qallta.bang.fragment.RecargaFragment;
 import com.qallta.bang.util.Util;
 
 import org.apache.http.HttpResponse;
@@ -28,17 +34,19 @@ import org.json.JSONObject;
  */
 public class SimpleDialog extends DialogFragment {
 
+
     private String mTelefono;
     private String mMonto;
     private String mOperador;
+    private String message;
+    private String title;
     private Context context;
+    private FragmentManager fragmentManager;
 
-    public SimpleDialog(String telefono, String monto,String mOperador,Context context) {
-        this.mTelefono = telefono;
-        this.mMonto = monto;
-        this.mOperador = mOperador;
-        this.context = context;
+
+    public SimpleDialog() {
     }
+
 
     public interface OnSimpleDialogListener {
         void onPossitiveButtonClick();
@@ -60,16 +68,20 @@ public class SimpleDialog extends DialogFragment {
      */
     public AlertDialog createSimpleDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setTitle("Recarga")
-                .setMessage("¿Desea enviar "+mMonto+" Bs. al "+mTelefono+"?")
+        builder.setTitle(title)
+                .setMessage(message)
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //listener.onPossitiveButtonClick();
-                                RecargaTask recargaTask = new RecargaTask(Util.TOKEN,mTelefono,mMonto,mOperador);
-                                recargaTask.execute();
+                                if (isConnected()) {
+                                    RecargaTask recargaTask = new RecargaTask(Util.TOKEN, mTelefono, mMonto, mOperador);
+                                    recargaTask.execute();
+                                } else {
+                                    Toast.makeText(getContext(), "Necesitas una conexion a Internet", Toast.LENGTH_LONG).show();
+                                }
+
                             }
                         })
                 .setNegativeButton("CANCELAR",
@@ -81,6 +93,18 @@ public class SimpleDialog extends DialogFragment {
                         });
 
         return builder.create();
+    }
+
+    private boolean isConnected(){
+        boolean sw = false;
+        if(Util.connectivityManager != null){
+            NetworkInfo networkInfo_WIFI = Util.connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo networkInfo_MOVIL = Util.connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (networkInfo_WIFI.isConnected() || networkInfo_MOVIL.isConnected()){
+                sw = true;
+            }
+        }
+        return sw;
     }
 
 
@@ -101,6 +125,48 @@ public class SimpleDialog extends DialogFragment {
 
 
 
+    public String getmTelefono() {
+        return mTelefono;
+    }
+
+    public void setmTelefono(String mTelefono) {this.mTelefono = mTelefono;}
+
+    public String getmMonto() {return mMonto;}
+
+    public void setmMonto(String mMonto) {this.mMonto = mMonto;}
+
+    public String getmOperador() {
+        return mOperador;
+    }
+
+    public void setmOperador(String mOperador) {
+        this.mOperador = mOperador;
+    }
+
+    public String getMessage() {return message;}
+
+    public void setMessage(String message) {this.message = message;}
+
+    public String getTitle() {return title;}
+
+    public void setTitle(String title) {this.title = title;}
+
+    @Override
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
+
+
+
+
 
     private class RecargaTask extends AsyncTask<Void, Void, String> {
 
@@ -108,6 +174,7 @@ public class SimpleDialog extends DialogFragment {
         private final String mTelefono;
         private final String mMonto;
         private final String mOperador;
+        private int saldo;
 
 
         public RecargaTask(String mToken, String mTelefono, String mMonto,String mOperador) {
@@ -132,7 +199,7 @@ public class SimpleDialog extends DialogFragment {
                 respuesta= jsonObject.getString("result");
                 if(respuesta.equals("OK")){
                     double s = Double.parseDouble(jsonObject.getString("saldo"));
-                    int saldo = (int)(s);
+                    saldo = (int)(s);
                     SharedPreferences sharedPreferences = Util.preferences;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("saldo", saldo);
@@ -149,15 +216,31 @@ public class SimpleDialog extends DialogFragment {
         @Override
         protected void onPostExecute(String success) {
             if (success.equals("OK")) {
-                Toast.makeText(context, "Recarga enviada.", Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Recarga enviada.", Toast.LENGTH_LONG).show();
+                ConfirmationSimpleDialog simpleDialog = new ConfirmationSimpleDialog();
+                simpleDialog.setmTelefono(mTelefono);
+                simpleDialog.setmMonto(mMonto);
+                simpleDialog.setmOperador(mOperador);
+                simpleDialog.setTitle("Confirmación");
+                simpleDialog.setMessage("Se envio " + mMonto + "Bs. al " + mTelefono + ". Su saldo actual es " + saldo + " Bs.");
+                simpleDialog.setFragmentManager(fragmentManager);
+                simpleDialog.setContext(context);
+                simpleDialog.show(fragmentManager, "SimpleDialog");
             } else if(success.equals("UNKNOWN_ACCOUNT")){
                 Toast.makeText(context, "Error.", Toast.LENGTH_LONG).show();
             } else if(success.equals("SIN_SALDO")){
                 Toast.makeText(context, "Su cuenta no tiene saldo suficiente", Toast.LENGTH_LONG).show();
             }
+            MainActivity mainActivity = new MainActivity();
+            mainActivity.setHeaderView();
+            RecargaFragment recargaFragment = new RecargaFragment();
+            recargaFragment.setSaldo(String.valueOf(saldo));
         }
 
     }
+
+
+
 
 }
 

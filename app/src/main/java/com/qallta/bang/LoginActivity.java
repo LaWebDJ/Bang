@@ -7,6 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,14 +51,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private View mProgressView;
     private View mLoginFormView;
 
+
     SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         iniciar = (Button) findViewById(R.id.btn_registrar1);
         registrarse = (TextView) findViewById(R.id.registrarse);
@@ -62,10 +66,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mTelefono = (EditText) findViewById(R.id.telefono);
         iniciar.setOnClickListener(this);
         registrarse.setOnClickListener(this);
-
         mLoginFormView = findViewById(R.id.login_form1);
         mProgressView = findViewById(R.id.login_progress1);
-
         preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
         String token = preferences.getString("token","");
         if(!token.isEmpty()){
@@ -79,6 +81,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else{
             cargarPreferencias();
         }
+
+
     }
 
     private void cargarPreferencias(){
@@ -105,6 +109,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
         }
+    }
+
+    public boolean isConnected(){
+        boolean sw = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager != null){
+            NetworkInfo networkInfo_WIFI = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo networkInfo_MOVIL = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (networkInfo_WIFI.isConnected() || networkInfo_MOVIL.isConnected()){
+                sw = true;
+            }
+        }
+        return sw;
     }
 
 
@@ -159,11 +176,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (cancel) {
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(usuario.trim(), password.trim(),telefono);
-            mAuthTask.execute((Void) null);
+            if(isConnected()){
+                showProgress(true);
+                mAuthTask = new UserLoginTask(usuario.trim(), password.trim(),telefono);
+                mAuthTask.execute((Void) null);
+            }else{
+                Toast.makeText(getApplicationContext(),"Necesitas una conexion a Internet",Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -203,6 +222,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
 
 
 
@@ -260,8 +280,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             showProgress(false);
             if (success.equals("OK")) {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                intent.putExtra("user","algo");
-                intent.putExtra("passw", "desde login");
+                //intent.putExtra("user","algo");
+                //intent.putExtra("passw", "desde login");
                 startActivity(intent);
                 //onDestroy();
                 finish();
@@ -280,4 +300,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             showProgress(false);
         }
     }
+
+
+
 }

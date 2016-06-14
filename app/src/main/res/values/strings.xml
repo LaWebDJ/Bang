@@ -3,8 +3,8 @@
 
     <string name="iniciar">Iniciar</string>
     <string name="newUser">Crear Nuevo</string>
-    <string name="Registrarse">Registrase</string>
-    <string name="Registrar">Registrar</string>
+    <string name="Registrarse">Regístrese</string>
+    <string name="Registrar">Registrarse</string>
     <string name="enviar">Enviar</string>
 
 
@@ -15,15 +15,16 @@
 
 
     <!--Required-->
-    <string name="error_miniCharacters">Minimo 6 caracteres.</string>
+    <string name="error_miniCharacters">Mínimo 6 caracteres.</string>
     <string name="error_required">Campo requerido.</string>
-    <string name="invalid_phone">Minimo 8 números.</string>
-    <string name="invalid_phone2">Numero invalido.</string>
-    <string name="invalid_ci">Minimo 7 números.</string>
-    <string name="usuario_ocupado">Ya existr el Usuario.</string>
+    <string name="invalid_phone">Mínimo 8 números.</string>
+    <string name="invalid_phone2">Número invalido.</string>
+    <string name="invalid_ci">Mínimo 7 números.</string>
+    <string name="usuario_ocupado">Ya existe el Usuario.</string>
     <string name="ci_invalid">Ya existe el CI.</string>
-    <string name="phone_invalid">Ya existe el Telefono.</string>
-
+    <string name="phone_invalid">Ya existe el Teléfono.</string>
+    <string name="different_passwords">Contraseña diferentes.</string>
+    <string name="invalid_email">Correo invalido.</string>
     <string name="error">error.</string>
 
     <!-- TODO: Remove or change this placeholder text -->

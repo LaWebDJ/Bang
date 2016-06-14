@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:configChanges="orientation|screenSize|keyboardHidden"
     android:padding="24dp">
 
     <TextView
@@ -15,7 +16,7 @@
         android:paddingBottom="20dp"
         android:layout_marginTop="32dp"
         android:paddingTop="20dp"
-        android:text="Se le enviar el codigo de confirmacion a través de un SMS"
+        android:text="Se le enviará el código de confirmación a través de un SMS"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -50,9 +51,9 @@
         android:layout_below="@+id/divider"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:background="@drawable/edit_text_border"
+
         android:ems="10"
-        android:hint="confirma codigo"
+        android:hint="confirmar código"
         android:inputType="textPersonName"
         android:padding="16dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />

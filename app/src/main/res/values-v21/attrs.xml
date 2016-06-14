@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CircleImageView"></declare-styleable>
+    <declare-styleable name="CircleImageView">0x7f010112, 0x7f010113</declare-styleable>
+    <declare-styleable name="CircleImageView_border_width">1</declare-styleable>
+    <declare-styleable name="CircleImageView_border_color">0</declare-styleable>
 </resources>

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.qallta.bang.MainActivity;
@@ -61,11 +62,16 @@ public class ReporteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_reporte, container, false);
         lstLista = (RecyclerView) view.findViewById(R.id.lstLista);
-        AdaptadorTitulares adaptador = new AdaptadorTitulares(Util.datos,getContext());
-        lstLista.setAdapter(adaptador);
-        lstLista.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        lstLista.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
-        lstLista.setItemAnimator(new DefaultItemAnimator());
+        if(Util.datos.size() > 0){
+            AdaptadorTitulares adaptador = new AdaptadorTitulares(Util.datos,getContext());
+            lstLista.setAdapter(adaptador);
+            lstLista.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+            lstLista.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+            lstLista.setItemAnimator(new DefaultItemAnimator());
+        }else {
+            Toast.makeText(getContext(), "No tienen Transferencia realizadas.", Toast.LENGTH_LONG).show();
+        }
+        ((MainActivity) getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         return  view;
     }
 

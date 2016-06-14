@@ -3,14 +3,19 @@ package com.qallta.bang;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -31,8 +36,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class RegistrarseActivity extends FragmentActivity implements View.OnClickListener {
+public class RegistrarseActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText mCI;
     private EditText mNombre;
@@ -42,6 +49,7 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
     private EditText mCorreo;
     private EditText mUsuario;
     private EditText mPassword;
+    private EditText mRepeatPassword;
     private Button registrar;
 
     FragmentManager fragmentManager;
@@ -50,13 +58,15 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
     private View mLoginFormView;
 
     private SharedPreferences sharedPreferences;
+    private ConnectivityManager  connectivityManager;
 
 
-    private UserLoginTask mAuthTask = null;
+    private RegistrarseTask mAuthTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_registrarse);
         mCI = (EditText)findViewById(R.id.ci);
         mNombre = (EditText) findViewById(R.id.nombre);
@@ -66,6 +76,7 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
         mCorreo = (EditText) findViewById(R.id.email);
         mUsuario = (EditText) findViewById(R.id.user);
         mPassword = (EditText) findViewById(R.id.password);
+        mRepeatPassword = (EditText) findViewById(R.id.repeat_password);
         registrar = (Button)findViewById(R.id.btn_registrar);
         registrar.setOnClickListener(this);
         fragmentManager = getSupportFragmentManager();
@@ -77,13 +88,13 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_registrar:
-                attemptLogin();
+                attempRegistrar();
                 break;
         }
     }
 
 
-    private void attemptLogin() {
+    private void attempRegistrar() {
         if (mAuthTask != null) {
             return;
         }
@@ -96,16 +107,17 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
         mCorreo.setError(null);
         mUsuario.setError(null);
         mPassword.setError(null);
-
-        // Store values at the time of the login attempt.
+        mRepeatPassword.setError(null);
         String ci = mCI.getText().toString();
         String nombre = mNombre.getText().toString();
         String apellido = mApellido.getText().toString();
         String direccion = mDireccion.getText().toString();
+        direccion = direccion.replace("/","%");
         String telefono = mTelefono.getText().toString();
         String correo = mCorreo.getText().toString();
         String usuario = mUsuario.getText().toString();
         String password = mPassword.getText().toString();
+        String repetPassword = mRepeatPassword.getText().toString();
         boolean cancel = false;
         View focusView = null;
         if(TextUtils.isEmpty(ci)){
@@ -136,6 +148,7 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
             focusView = mDireccion;
             cancel = true;
         }
+
         if(TextUtils.isEmpty(telefono)){
             mTelefono.setError(getString(R.string.error_required));
             focusView = mTelefono;
@@ -151,6 +164,10 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
         }
         if(TextUtils.isEmpty(correo)){
             mCorreo.setError(getString(R.string.error_required));
+            focusView = mCorreo;
+            cancel = true;
+        }else if (!validateEmail(correo)){
+            mCorreo.setError(getString(R.string.invalid_email));
             focusView = mCorreo;
             cancel = true;
         }
@@ -172,15 +189,50 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
             focusView = mUsuario;
             cancel = true;
         }
+        if(TextUtils.isEmpty(repetPassword)){
+            mRepeatPassword.setError(getString(R.string.error_required));
+            focusView = mRepeatPassword;
+            cancel = true;
+        }else if(!password.equals(repetPassword)) {
+            mRepeatPassword.setError(getString(R.string.different_passwords));
+            focusView = mRepeatPassword;
+            cancel = true;
+        }
         if (cancel) {
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(ci,nombre.trim(),apellido.trim(),direccion.trim(),telefono,correo.trim(),usuario.trim(),password.trim());
-            mAuthTask.execute((Void) null);
+            if(isConnected()){
+                showProgress(true);
+                mAuthTask = new RegistrarseTask(ci,nombre.trim(),apellido.trim(),direccion.trim(),telefono,correo.trim(),usuario.trim(),password.trim());
+                mAuthTask.execute((Void) null);
+            }else{
+                Toast.makeText(getApplicationContext(),"Necesitas una conexion a Internet",Toast.LENGTH_LONG).show();
+            }
         }
+    }
+
+    private void verificar(String direccino){
+
+    }
+
+    public static boolean validateEmail(String email) {
+        Pattern pattern = Pattern.compile(Util.PATTERN_EMAIL);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    public boolean isConnected(){
+        boolean sw = false;
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Util.connectivityManager = connectivityManager;
+        if(connectivityManager != null){
+            NetworkInfo networkInfo_WIFI = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo networkInfo_MOVIL = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (networkInfo_WIFI.isConnected() || networkInfo_MOVIL.isConnected()){
+                sw = true;
+            }
+        }
+        return sw;
     }
 
 
@@ -197,7 +249,7 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -229,7 +281,7 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
     /**
      * Tarea asincrona para la autenticacion del registro
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    public class RegistrarseTask extends AsyncTask<Void, Void, String> {
 
         private final String ci;
         private final String nombre;
@@ -240,13 +292,14 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
         private final String usuario;
         private final String contraseña;
 
-        UserLoginTask(String ci, String nombre, String apellido,String direccion ,String telefono, String correo, String usuario, String contraseña) {
+        RegistrarseTask(String ci, String nombre, String apellido,String direccion,String telefono, String correo, String usuario, String contraseña) {
             this.ci = ci;
             this.nombre = nombre.replace(" ","%20");
             this.apellido = apellido.replace(" ","%20");;
             String direccion1 = direccion;
             try {
                 this.direccion = URLEncoder.encode(direccion1, "UTF-8");
+                this.direccion = this.direccion.replace("+","%20");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -309,14 +362,13 @@ public class RegistrarseActivity extends FragmentActivity implements View.OnClic
             mAuthTask = null;
             showProgress(false);
             if (success.equals("OK")) {
-                //fragmentManager = getFragmentManager();
                 TAG = "CodeDialog";
-                //finish();
                 new CodeDialog().show(fragmentManager,"CodeDialog");
+                    //finish();
             } else if(success.equals("EXIST_USER")){
                 mUsuario.setError(getString(R.string.usuario_ocupado));
                 mUsuario.requestFocus();
-            }else if(success.equals("CONFLICT")){
+            }else if(success.equals("EXISTS_CUSTOMER")){
                 mCI.setError(getString(R.string.error));
                 mCI.requestFocus();
             }else if(success.equals("EXISTS_ACCOUNT")){

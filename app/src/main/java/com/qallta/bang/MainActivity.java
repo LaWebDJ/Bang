@@ -3,19 +3,13 @@ package com.qallta.bang;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.ActionProvider;
-import android.view.ContextMenu;
-import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,12 +19,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qallta.bang.RecyclerView.Titular;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.qallta.bang.RecyclerView.Transferencia;
+import com.qallta.bang.asyncTask.SaldoTask;
 import com.qallta.bang.fragment.RecargaFragment;
 import com.qallta.bang.fragment.ReporteFragment;
 import com.qallta.bang.util.Util;
@@ -46,63 +45,126 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        SimpleDialog.OnSimpleDialogListener{
+        SimpleDialog.OnSimpleDialogListener,
+        ConfirmationSimpleDialog.OnSimpleDialogListener,
+        DrawerLayout.DrawerListener{
 
     private Toolbar toolbar;
     private TextView user;
     private TextView cuenta;
     private TextView saldo;
-    private TextView fecha;
-    private DrawerLayout drawerLayout;
+    private ImageView image;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-
+    private NavigationView navigationView;
     private SharedPreferences preferences;
 
     private JSONArray lista;
     private ArrayList<Transferencia> datos;
+
+    private ImageLoader imageLoader;
+    private ConnectivityManager  connectivityManager;
+    private boolean connected;
+
+    private DisplayImageOptions displayImageOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View view = navigationView.inflateHeaderView(R.layout.nav_header_main);//getHeaderView(R.id.nav_header_main);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Util.navigationView = navigationView;
+        View view = navigationView.inflateHeaderView(R.layout.nav_header_main);
         user = (TextView) view.findViewById(R.id.name);
         cuenta = (TextView) view.findViewById(R.id.cuenta);
         saldo = (TextView) view.findViewById(R.id.saldo);
-        //SharedPreferences sharedPreferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE); ESTO CAMBIE
+        image = (ImageView) view.findViewById(R.id.imageView);
         preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
-        user.setText(preferences.getString("name", ""));
-        cuenta.setText(preferences.getString("account",""));
-        saldo.setText(String.valueOf(preferences.getInt("saldo",0))+" Bs.");
+        Util.preferences = preferences;
+        SaldoTask saldoTask = new SaldoTask(preferences.getString("token", ""));
+        saldoTask.execute();
         setSupportActionBar(toolbar);
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        */
-
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Util.connectivityManager = connectivityManager;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        displayImageOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+        ImageLoaderConfiguration imageLoaderConfiguration = new ImageLoaderConfiguration.Builder(getApplicationContext())
+                .defaultDisplayImageOptions(displayImageOptions)
+                .build();
+        ImageLoader.getInstance().init(imageLoaderConfiguration);
+        imageLoader = ImageLoader.getInstance();
+        String url = Util.URL_SERVICE+"img-empresa/"+Util.TOKEN;
+        ImageLoader.getInstance().displayImage(url, image, displayImageOptions);
+        user.setText(preferences.getString("name", ""));
+        cuenta.setText(preferences.getString("account",""));
+        saldo.setText("Saldo: "+String.valueOf(preferences.getInt("saldo", 0)) + " Bs.");
         setFragment(0);
+
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawerToggle =  new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        ){
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                InputMethodManager imm1 = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm1.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
+                Util.preferences = preferences;
+                SaldoTask saldoTask = new SaldoTask(preferences.getString("token",""));
+                saldoTask.execute();
+                setHeaderView();
+                InputMethodManager imm1 = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm1.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
+
+
+    public void setHeaderView(){
+        View view = Util.navigationView.getHeaderView(0);
+        user = (TextView) view.findViewById(R.id.name);
+        cuenta = (TextView) view.findViewById(R.id.cuenta);
+        saldo = (TextView) view.findViewById(R.id.saldo);
+        user.setText(Util.preferences.getString("name", ""));
+        cuenta.setText(Util.preferences.getString("account", ""));
+        saldo.setText("Saldo: "+String.valueOf(Util.preferences.getInt("saldo", 0)) + " Bs.");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
+        Util.preferences = preferences;
+        SaldoTask saldoTask = new SaldoTask(preferences.getString("token", ""));
+        saldoTask.execute();
+        setHeaderView();
+        imageLoader = ImageLoader.getInstance();
+        String url = Util.URL_SERVICE+"img-empresa/"+Util.TOKEN;
+        ImageLoader.getInstance().displayImage(url, image, displayImageOptions);
+    }
+
+
 
     public void setFragment(int position) {
 
@@ -116,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case 1:
+                InputMethodManager imm1 = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm1.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 ReporteFragment reporteFragment = new ReporteFragment();
@@ -156,20 +220,29 @@ public class MainActivity extends AppCompatActivity implements
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         int id = item.getItemId();
         if (id == R.id.nav_camera) {
             toolbar.setTitle("Recarga");
             setFragment(0);
         } else if (id == R.id.nav_gallery) {
-            toolbar.setTitle("Reporte");
-            ReporteTask reporteTask = new ReporteTask(Util.TOKEN);
-            reporteTask.execute();
+            if(isConnected()){
+                toolbar.setTitle("Reporte");
+                ReporteTask reporteTask = new ReporteTask(Util.TOKEN);
+                reporteTask.execute();
+            }else{
+                Toast.makeText(getApplicationContext(),"Necesitas una conexion a Internet",Toast.LENGTH_LONG).show();
+            }
         }  else if (id == R.id.salir) {
-            super.onBackPressed();
-            preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
-            String token = preferences.getString("token","");
-            LogoutTask logoutTask = new LogoutTask(token);
-            logoutTask.execute();
+            if(isConnected()) {
+                preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
+                String token = preferences.getString("token", "");
+                LogoutTask logoutTask = new LogoutTask(token);
+                logoutTask.execute();
+                super.onBackPressed();
+            }else{
+                Toast.makeText(getApplicationContext(),"Necesitas una conexion a Internet",Toast.LENGTH_LONG).show();
+            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -177,23 +250,22 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    private void cargarLista(JSONArray lista) {
-        datos = new ArrayList<>();
-          /*
-        JSONObject json = null;
-
-        try {
-            json = (JSONObject) lista.get(0);
-            String fechaRegistro = String.valueOf(json.get("fechaRegistro"));
-            preferences = getSharedPreferences("bangPreferences", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("fecha",fechaRegistro);
-            editor.apply();
-        } catch (JSONException e) {
-            Log.e("daniel->JSONException: ", e.getMessage());
+    private boolean isConnected(){
+        boolean sw = false;
+        //connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager != null){
+            NetworkInfo networkInfo_WIFI = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo networkInfo_MOVIL = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (networkInfo_WIFI.isConnected() || networkInfo_MOVIL.isConnected()){
+                sw = true;
+            }
         }
-        */
+        return sw;
+    }
 
+
+    public void cargarLista(JSONArray lista) {
+        datos = new ArrayList<>();
         for (int i = 0; i < lista.length(); i++){
             try {
                 JSONObject jsonObject = (JSONObject) lista.get(i);
@@ -211,6 +283,24 @@ public class MainActivity extends AppCompatActivity implements
         }
         Util.datos = datos;
         setFragment(1);
+    }
+
+    @Override
+    public void onDrawerSlide(View drawerView, float slideOffset) {
+    }
+
+    @Override
+    public void onDrawerOpened(View drawerView) {
+        Toast.makeText(getApplicationContext(), "onDrawerOpened", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDrawerClosed(View drawerView) {
+        Toast.makeText(getApplicationContext(),"onDrawerClosed",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
     }
 
     @Override
@@ -266,8 +356,10 @@ public class MainActivity extends AppCompatActivity implements
                 editor.putString("account", "");
                 editor.apply();
                 Util.preferences = preferences;
+
                 Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
                 startActivity(intent);
+
                 finish();
             } else if(success.equals("UNKNOWN_ACCOUNT")){
                 Toast.makeText(getApplicationContext(),"Error.",Toast.LENGTH_LONG).show();
@@ -325,9 +417,5 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
-
-
-
-
 
 }

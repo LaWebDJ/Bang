@@ -2,66 +2,157 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.RecargaFragment">
 
+    tools:context=".fragment.RecargaFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <Spinner
-            android:id="@+id/spinner"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageTigo"
+                android:visibility="invisible"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/tigo"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageTigogris"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:src="@drawable/tigogris"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageViva"
+                android:visibility="invisible"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/viva"
+                app:civ_border_width="0dp"
+                app:civ_border_color="#FF000000"
+                android:layout_centerHorizontal="true" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageVivagris"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:src="@drawable/vivagris"
+                app:civ_border_width="0dp"
+                app:civ_border_color="#FF000000"
+                android:layout_centerHorizontal="true" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageEntel"
+                android:visibility="invisible"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/entel"
+                app:civ_border_width="0dp"
+                app:civ_border_color="#FF000000"
+                android:layout_alignParentRight="true" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageEntelgris"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:src="@drawable/entelgris"
+                app:civ_border_width="0dp"
+                app:civ_border_color="#FF000000"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_gravity="center"
-            android:textSize="55dp"
-            android:entries="@array/Games" />
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <EditText
-                android:id="@+id/telefono1"
+            android:orientation="vertical">
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Telefono"
-                android:imeActionId="@+id/login"
-                android:inputType="phone"
-                android:imeOptions="actionUnspecified"
-                android:maxLines="1"
-                android:maxLength="8"
-                android:singleLine="true"
-                />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginTop="30dp">
+                <EditText
+                    android:id="@+id/telefono1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Teléfono Celular"
+                    android:textAlignment="center"
+                    android:textSize="40dp"
+                    android:imeActionId="@+id/login"
+                    android:inputType="phone"
+                    android:imeOptions="actionUnspecified"
+                    android:maxLines="1"
+                    android:maxLength="8"
+                    android:singleLine="true"
+                    />
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp">
+                <EditText
+                    android:id="@+id/monto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Monto (Bs.)"
+                    android:textAlignment="center"
+                    android:textSize="40dp"
+                    android:imeActionId="@+id/login"
+                    android:inputType="phone"
+                    android:imeOptions="actionUnspecified"
+                    android:maxLines="1"
+                    android:maxLength="3"
+                    android:singleLine="true"
+                    />
+            </android.support.design.widget.TextInputLayout>
+            <Button
+                android:id="@+id/btn_eviar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/enviar"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:background="@color/colorAccent"
+                android:layout_marginTop="30dp"/>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:scrollIndicators="top|bottom">
+            <TextView
+                android:id="@+id/textViewSaldo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Saldo"
+                android:layout_gravity="left|bottom"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
-            <EditText
-                android:id="@+id/monto"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textViewReporte"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Monto"
-                android:imeActionId="@+id/login"
-                android:inputType="phone"
-                android:imeOptions="actionUnspecified"
-                android:maxLines="1"
-                android:maxLength="3"
-                android:singleLine="true"
-                />
-        </android.support.design.widget.TextInputLayout>
-        <Button
-            android:id="@+id/btn_eviar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/enviar"
-            android:textStyle="bold"
-            android:background="@color/colorAccent"
-            android:layout_marginTop="30dp"/>
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Reporte"
+                android:layout_gravity="right|bottom"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:src="@drawable/ic_style_black_24dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_alignTop="@+id/textViewReporte"
+                android:layout_toLeftOf="@+id/textViewReporte"
+                android:layout_toStartOf="@+id/textViewReporte" />
+        </RelativeLayout>
     </LinearLayout>
-
-
-
-
 </FrameLayout>
