@@ -127,7 +127,7 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
 
     public void setSaldo(String saldo){
         this.saldo = (TextView)Util.view.findViewById(R.id.textViewSaldo);
-        this.saldo.setText("Saldo: "+saldo+"Bs.");
+        this.saldo.setText("Saldo: " + saldo + "Bs.");
     }
 
     @Override
@@ -142,20 +142,6 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         fragmentManager = getFragmentManager();
-
-        RelativeLayout.LayoutParams layoutParamsTigo;
-        RelativeLayout.LayoutParams layoutParamsViva;
-        RelativeLayout.LayoutParams layoutParamsEntel;
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-
-        /*
-        int tigowidth = imageTigo.getWidth();
-        int tigoheight = imageTigo.getHeight();
-        int vivawidth = imageViva.getWidth();
-        int vivaheight = imageViva.getHeight();
-        int entelwidth = imageEntel.getMinimumWidth();
-        int entelheight = imageEntel.getMinimumHeight();
-        */
         switch (v.getId()){
             case R.id.btn_eviar:
                 mTelefono = telefonoEditText.getText().toString();
@@ -168,139 +154,53 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.imageTigogris:
                 mOperador = "TIGO";
-                //layoutParamsTigo = imageTigo.getLayoutParams();
-                //int width = display.getWidth();
-                //int height = display.getHeight();
-                //layoutParamsTigo = new RelativeLayout.LayoutParams(width,height);
-                //imageTigo.getLayoutParams().height = 192;
-                //imageTigo.getLayoutParams().width = 192;
-                //imageTigo.setLayoutParams(layoutParamsTigo);
-
-                //imageTigo.setImageResource(R.drawable.tigo);
                 imageTigogris.setVisibility(View.INVISIBLE);
                 imageTigo.setVisibility(View.VISIBLE);
                 imageEntel.setVisibility(View.INVISIBLE);
                 imageEntelgris.setVisibility(View.VISIBLE);
                 imageViva.setVisibility(View.INVISIBLE);
                 imageVivagris.setVisibility(View.VISIBLE);
-
-
-                //layoutParamsTigo.height = 192;
-                //layoutParamsTigo.width = 192;
-                //imageTigo.setLayoutParams(layoutParamsTigo);
-
-                //layoutParamsViva = imageViva.getLayoutParams();
-                //imageViva.setMaxWidth(152);
-                //imageViva.setMaxHeight(152);
-                //layoutParamsViva.height = 152;
-                //layoutParamsViva.width = 152;
-                    //layoutParamsViva = new RelativeLayout.LayoutParams(152,152);
-                    //imageViva.setLayoutParams(layoutParamsViva);
-                //imageViva.getLayoutParams().width = 152;
-                //imageViva.getLayoutParams().height = 152;
-                    //imageViva.setImageResource(R.drawable.vivagris);
-
-                //layoutParamsEntel = imageEntel.getLayoutParams();
-                //imageEntel.setMaxHeight(152);
-                //imageEntel.setMaxWidth(152);
-                //layoutParamsEntel.width = 152;
-                //layoutParamsEntel.height = 152;
-                    //layoutParamsEntel = new RelativeLayout.LayoutParams(152,152);
-                    //imageEntel.setLayoutParams(layoutParamsEntel);
-                //imageEntel.getLayoutParams().height = 152;
-                //imageEntel.getLayoutParams().width = 152;
-                    //imageEntel.setImageResource(R.drawable.entelgris);
-
                 break;
             case R.id.imageVivagris:
                 mOperador = "VIVA";
-                //layoutParamsViva = imageViva.getLayoutParams();
-                //imageViva.setMaxWidth(192);
-                //imageViva.setMaxHeight(192);
-                //layoutParamsViva.width = 192;
-                //layoutParamsViva.height = 192;
-                //layoutParamsViva = new RelativeLayout.LayoutParams(192,192);
-                //imageViva.setLayoutParams(layoutParamsViva);
-                //imageViva.getLayoutParams().width = 192;
-                //imageViva.getLayoutParams().height = 192;
-                //imageViva.setImageResource(R.drawable.viva);
                 imageVivagris.setVisibility(View.INVISIBLE);
                 imageViva.setVisibility(View.VISIBLE);
                 imageTigo.setVisibility(View.INVISIBLE);
                 imageTigogris.setVisibility(View.VISIBLE);
                 imageEntel.setVisibility(View.INVISIBLE);
                 imageEntelgris.setVisibility(View.VISIBLE);
-
-                //layoutParamsTigo = imageTigo.getLayoutParams();
-                //imageTigo.setMaxHeight(152);
-                //imageTigo.setMaxWidth(152);
-                //layoutParamsTigo.height = 152;
-                //layoutParamsTigo.width = 152;
-                //layoutParamsTigo = new RelativeLayout.LayoutParams(152,152);
-                //imageTigo.setLayoutParams(layoutParamsTigo);
-                //imageTigo.getLayoutParams().height = 152;
-                //imageTigo.getLayoutParams().width = 152;
-                //imageTigo.setImageResource(R.drawable.tigogris);
-
-                //layoutParamsEntel = imageEntel.getLayoutParams();
-                //imageEntel.setMaxHeight(152);
-                //imageEntel.setMaxWidth(152);
-                //layoutParamsEntel.width = 152;
-                //layoutParamsEntel.height = 152;
-                //layoutParamsEntel = new RelativeLayout.LayoutParams(152,152);
-                //imageEntel.setLayoutParams(layoutParamsEntel);
-                //imageEntel.getLayoutParams().height = 152;
-                //imageEntel.getLayoutParams().width = 152;
-                //imageEntel.setImageResource(R.drawable.entelgris);
-
                 break;
             case R.id.imageEntelgris:
                 mOperador = "ENTEL";
-                //imageEntel.setMaxHeight(192);
-                //imageEntel.setMaxWidth(192);
-                //layoutParamsEntel = imageEntel.getLayoutParams();
-                //layoutParamsEntel.height = 192;
-                //layoutParamsEntel.width = 192;
-                //layoutParamsEntel = new RelativeLayout.LayoutParams(192,192);
-                //imageEntel.setLayoutParams(layoutParamsEntel);
-                //imageEntel.getLayoutParams().width = 192;
-                //imageEntel.getLayoutParams().height = 192;
-                //imageEntel.setImageResource(R.drawable.entel);
                 imageEntelgris.setVisibility(View.INVISIBLE);
                 imageEntel.setVisibility(View.VISIBLE);
                 imageTigo.setVisibility(View.INVISIBLE);
                 imageTigogris.setVisibility(View.VISIBLE);
                 imageViva.setVisibility(View.INVISIBLE);
                 imageVivagris.setVisibility(View.VISIBLE);
-
-                //layoutParamsTigo = imageTigo.getLayoutParams();
-                //imageTigo.setMaxHeight(152);
-                //imageTigo.setMaxWidth(152);
-                //layoutParamsTigo.height = 152;
-                //layoutParamsTigo.width = 152;
-                //layoutParamsTigo = new RelativeLayout.LayoutParams(152,152);
-                //imageTigo.setLayoutParams(layoutParamsTigo);
-                //imageTigo.getLayoutParams().height = 152;
-                //imageTigo.getLayoutParams().width = 152;
-                //imageTigo.setImageResource(R.drawable.tigogris);
-
-                //layoutParamsViva = imageViva.getLayoutParams();
-                //imageViva.setMaxWidth(152);
-                //imageViva.setMaxHeight(152);
-                //layoutParamsViva.height= 152;
-                //layoutParamsViva.width = 152;
-                //layoutParamsViva = new RelativeLayout.LayoutParams(152,152);
-                //imageViva.setLayoutParams(layoutParamsViva);
-                //imageViva.getLayoutParams().height = 152;
-                //imageViva.getLayoutParams().width = 152;
-                //imageViva.setImageResource(R.drawable.vivagris);
-
                 break;
             case R.id.textViewReporte:
-                ReporteTask reporteTask = new ReporteTask(Util.TOKEN,getFragmentManager());
-                reporteTask.execute();
+                if (isConnected()) {
+                    ReporteTask reporteTask = new ReporteTask(Util.TOKEN, getFragmentManager());
+                    reporteTask.execute();
+                }else{
+                    Toast.makeText(getContext(),"Necesitas una conexion a Internet",Toast.LENGTH_LONG).show();
+                }
                 break;
         }
+    }
+
+    private boolean isConnected(){
+        boolean sw = false;
+        //connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(Util.connectivityManager != null){
+            NetworkInfo networkInfo_WIFI = Util.connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo networkInfo_MOVIL = Util.connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (networkInfo_WIFI.isConnected() || networkInfo_MOVIL.isConnected()){
+                sw = true;
+            }
+        }
+        return sw;
     }
 
 
@@ -325,6 +225,10 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
             telefonoEditText.setError(getString(R.string.invalid_phone2));
             focusView = telefonoEditText;
             sw = true;
+        }else if(Integer.parseInt(telefono) < 60000000){
+            telefonoEditText.setError(getString(R.string.invalid_phone2));
+            focusView = telefonoEditText;
+            sw = true;
         }
         if (TextUtils.isEmpty(monto)) {
             montoEditText.setError(getString(R.string.error_required));
@@ -332,6 +236,10 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
             sw = true;
         }else if(!TextUtils.isDigitsOnly(monto)){
             montoEditText.setError(getString(R.string.invalid_phone2));
+            focusView = montoEditText;
+            sw = true;
+        }else if(Integer.parseInt(monto) <= 0){
+            montoEditText.setError(getString(R.string.monto_invalido));
             focusView = montoEditText;
             sw = true;
         }
@@ -344,7 +252,7 @@ public class RecargaFragment extends Fragment implements View.OnClickListener{
             simpleDialog.setmOperador(mOperador);
             simpleDialog.setContext(context);
             simpleDialog.setTitle("Recarga");
-            simpleDialog.setMessage("¿Desea enviar " + mMonto + "Bs. al " + mTelefono + "?");
+            simpleDialog.setMessage("¿Desea enviar " + mMonto + "Bs. al número " + mTelefono + "?");
             simpleDialog.setFragmentManager(fragmentManager);
             simpleDialog.show(fragmentManager,"SimpleDialog");
             telefonoEditText.setText("");

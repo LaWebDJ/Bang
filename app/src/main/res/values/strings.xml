@@ -19,6 +19,7 @@
     <string name="error_required">Campo requerido.</string>
     <string name="invalid_phone">Mínimo 8 números.</string>
     <string name="invalid_phone2">Número invalido.</string>
+    <string name="monto_invalido">Monto mayor a 0.</string>
     <string name="invalid_ci">Mínimo 7 números.</string>
     <string name="usuario_ocupado">Ya existe el Usuario.</string>
     <string name="ci_invalid">Ya existe el CI.</string>

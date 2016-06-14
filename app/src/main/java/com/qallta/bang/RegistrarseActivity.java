@@ -368,12 +368,14 @@ public class RegistrarseActivity extends AppCompatActivity implements View.OnCli
             } else if(success.equals("EXIST_USER")){
                 mUsuario.setError(getString(R.string.usuario_ocupado));
                 mUsuario.requestFocus();
-            }else if(success.equals("EXISTS_CUSTOMER")){
+            }else if(success.equals("CONFLICT")){
                 mCI.setError(getString(R.string.error));
                 mCI.requestFocus();
             }else if(success.equals("EXISTS_ACCOUNT")){
                 mTelefono.setError(getString(R.string.phone_invalid));
                 mTelefono.requestFocus();
+            }else if(success.equals("REGISTRADO")){
+                Toast.makeText(getApplicationContext(),"Señor Usuario usted ya se encuentra registrado.",Toast.LENGTH_LONG).show();
             }
         }
 

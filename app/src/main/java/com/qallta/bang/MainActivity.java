@@ -411,9 +411,8 @@ public class MainActivity extends AppCompatActivity implements
             //showProgress(false);
             if (success.equals("OK")) {
                 cargarLista(lista);
-            } else if(success.equals("phone_occupied")){
-                //mTelefono.setError(getString(R.string.phone_invalid));
-                //mTelefono.requestFocus();
+            } else if(success.equals("CONFLICT")){
+                Toast.makeText(getApplicationContext(), "Error.", Toast.LENGTH_LONG).show();
             }
         }
     }

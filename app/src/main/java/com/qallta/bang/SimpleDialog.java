@@ -222,14 +222,14 @@ public class SimpleDialog extends DialogFragment {
                 simpleDialog.setmMonto(mMonto);
                 simpleDialog.setmOperador(mOperador);
                 simpleDialog.setTitle("Confirmación");
-                simpleDialog.setMessage("Se envio " + mMonto + "Bs. al " + mTelefono + ". Su saldo actual es " + saldo + " Bs.");
+                simpleDialog.setMessage("Se envio " + mMonto + "Bs. al número " + mTelefono + ". Su saldo actual es " + saldo + "Bs.");
                 simpleDialog.setFragmentManager(fragmentManager);
                 simpleDialog.setContext(context);
                 simpleDialog.show(fragmentManager, "SimpleDialog");
             } else if(success.equals("UNKNOWN_ACCOUNT")){
                 Toast.makeText(context, "Error.", Toast.LENGTH_LONG).show();
             } else if(success.equals("SIN_SALDO")){
-                Toast.makeText(context, "Su cuenta no tiene saldo suficiente", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Su cuenta no tiene saldo suficiente.", Toast.LENGTH_LONG).show();
             }
             MainActivity mainActivity = new MainActivity();
             mainActivity.setHeaderView();

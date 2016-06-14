@@ -290,7 +290,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }else if(success.equals("INCORRECT_DATA")){
                 Toast.makeText(getApplicationContext(),"Datos de acceso incorrectos.",Toast.LENGTH_LONG).show();
             }else if(success.equals("CONFLICT")){
-                Toast.makeText(getApplicationContext(),"System Error",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
             }
         }
 

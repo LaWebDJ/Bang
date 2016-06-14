@@ -239,7 +239,6 @@ public class CodeDialog extends DialogFragment {
                 Intent intent = new Intent(getContext(),MainActivity.class);
                 ComponentName componentName = intent.getComponent();
                 Intent mainIntent = IntentCompat.makeRestartActivityTask(componentName);
-
                 startActivity(mainIntent);
                 dismiss();
             }else if(success.equals("UNKNOWN_CODE")){
@@ -247,7 +246,7 @@ public class CodeDialog extends DialogFragment {
                 contador.cancel();
                 dismiss();
             }else if(success.equals("CONFLICT")){
-                Toast.makeText(getContext(),"System Error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"Error",Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         }
