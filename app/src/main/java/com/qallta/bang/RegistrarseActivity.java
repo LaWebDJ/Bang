@@ -352,7 +352,6 @@ public class RegistrarseActivity extends AppCompatActivity implements View.OnCli
                 }
             } catch (Exception e) {
                 Log.e("UserLoginTask->ERROR LOCAL ", "Error: " + e.getMessage());
-
             }
             return respuesta;
         }
