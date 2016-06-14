@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Bang</string>
+
+    <string name="iniciar">Iniciar</string>
+    <string name="newUser">Crear Nuevo</string>
+    <string name="Registrarse">Registrase</string>
+    <string name="Registrar">Registrar</string>
+    <string name="enviar">Enviar</string>
+
+
+    <string name="title_activity_main">Bang</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
+
+    <!--Required-->
+    <string name="error_miniCharacters">Minimo 6 caracteres.</string>
+    <string name="error_required">Campo requerido.</string>
+    <string name="invalid_phone">Minimo 8 números.</string>
+    <string name="invalid_phone2">Numero invalido.</string>
+    <string name="invalid_ci">Minimo 7 números.</string>
+    <string name="usuario_ocupado">Ya existr el Usuario.</string>
+    <string name="ci_invalid">Ya existe el CI.</string>
+    <string name="phone_invalid">Ya existe el Telefono.</string>
+
+    <string name="error">error.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Spinner -->
+    <string-array name="Games">
+        <item>Seleccione un Operador</item>
+        <item>TIGO</item>
+        <item>VIVA</item>
+        <item>ENTEL</item>
+    </string-array>
+</resources>
